@@ -9,7 +9,7 @@ function trendingBooks(){
 
     const req = new XMLHttpRequest();
     
-    const MAX_BOOKS_DISPLAY = 20; // MAX is  100
+    const MAX_BOOKS_DISPLAY = 100; // MAX is  100
 
     req.onreadystatechange = function() {
        
@@ -77,7 +77,7 @@ function displayTrendingBooks(books){
     if(books.first_publish_year){
         pubContainer.textContent = `Published in ${books.first_publish_year}` 
     }
-    
+
     const langs = books.language;
     
     const langContainer = document.createElement('div'); //Language container
@@ -105,7 +105,7 @@ function titleClicked(event){
     req.onreadystatechange = function() {
         
         if (this.readyState == 4 && this.status == 200) {
-            trendingContainer.innerHTML = "";
+            bookViewContainer.innerHTML = "";
             const reqJSON = JSON.parse(req.responseText)
             displayBook(reqJSON);
         }
@@ -119,16 +119,26 @@ function titleClicked(event){
 function displayBook(book)
 {
     console.log(book)
-    const bookContainer = document.createElement('div')
+    const bookContainer = document.createElement('div') // container 
     
     if (book.covers){
         const coverImg = document.createElement('img');
         coverImg.setAttribute('src', `https://covers.openlibrary.org/b/id/${book.covers[0]}-M.jpg`);
         bookContainer.appendChild(coverImg)    
     }
-
+    const title = document.createElement('h3')
+    title.innerHTML = book.title;
+    bookContainer.appendChild(title) 
+    
+    if(book.description)
+    {
+        const description = document.createElement('div')
+        description.innerHTML = "<strong>Description</strong>: " + book.description.value;
+        bookContainer.appendChild(description);
+    }
     const authorContainer = document.createElement('div'); 
     const authors = book.authors
+    
     for (const author in authors) {  
         
         const authorBtn=  document.createElement('button');
@@ -140,10 +150,9 @@ function displayBook(book)
     const pubContainer = document.createElement('div'); // Published container
     
     
-    pubContainer.textContent = `Published in ${book.created.value}` 
+    pubContainer.innerHTML = "<strong>Published:</strong> " + book.created.value;
 
     
-    // bookContainer.appendChild(title) 
     // bookContainer.appendChild(authorContainer)
     bookContainer.appendChild(pubContainer)
     bookViewContainer.appendChild(bookContainer);

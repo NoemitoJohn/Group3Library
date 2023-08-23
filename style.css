@@ -1,3 +1,15 @@
+.content{
+    display: flex;
+    
+}
+.trending{
+    flex: 1;
+}
+.book{
+    flex: 1;
+}
+
+
 .title{
     border: none;
     background-color: white;
