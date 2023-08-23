@@ -1,0 +1,28 @@
+.title{
+    border: none;
+    background-color: white;
+    text-align: center;
+}
+
+.title:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.author_btn{
+    border: none;
+    background-color: white;
+    text-align: center;
+}
+.author_btn:hover
+{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+.bookContainer{
+    border: 1px solid black;
+    margin: 10px;
+}
