@@ -1,13 +1,15 @@
 const API = 'https://openlibrary.org';
 
-let books = null;
+//let books = null;
 
 const booksContainer = document.querySelector(".trending")
 const bookInfoContainer = document.querySelector(".book")
 
 const searchInput = document.querySelector("#searchInput")
 const searchBtn = document.querySelector("#searchBtn")
+const trendingBooksBtn = document.querySelector("#trendingBooksBtn")
 
+trendingBooksBtn.addEventListener('click', trendingBooks)
 
 searchBtn.addEventListener('click', search)
 
@@ -34,9 +36,13 @@ function search(){
     
     req.onreadystatechange = function() {
         
+        if(this.status == 0){
+            booksContainer.innerHTML = "Please Wait"; // loading search
+            bookInfoContainer.innerHTML = "";
+        }
+
         if (this.readyState == 4 && this.status == 200) {
             
-            bookInfoContainer.innerHTML = "";
             booksContainer.innerHTML = "";
             
             const reqJSON = JSON.parse(req.responseText)
@@ -68,22 +74,19 @@ function trendingBooks(){
 
         if(this.status == 0){
            booksContainer.innerHTML = "Please Wait" // loading
-        }
-        
-        if (books != null) {
-            displayTrendingBooks(books[i])
-            return;
+           bookInfoContainer.innerHTML = "";
         }
 
         if (this.readyState == 4 && this.status == 200) {
             
-            booksContainer.innerHTML = "" // reset body html
-
+            
+            booksContainer.innerHTML = "";
+            
             const reqJSON = JSON.parse(req.responseText)
-            books = reqJSON.works;
+            const books = reqJSON.works;
             
             for (let i = 0; i < MAX_BOOKS_DISPLAY; i++) {
-                console.log(books[i])
+               // console.log(books[i])
                 displayBook(books[i])
             }        
        }
@@ -178,6 +181,7 @@ function displayBookInfo(book)
         coverImg.setAttribute('src', `https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`);
         bookContainer.appendChild(coverImg)    
     }
+
     const title = document.createElement('h3')
     title.innerHTML = book.title;
     bookContainer.appendChild(title) 
@@ -185,7 +189,13 @@ function displayBookInfo(book)
     if(book.description)
     {
         const description = document.createElement('div')
-        description.innerHTML = "<strong>Description</strong>: " + book.description.value;
+        description.innerHTML = "<strong>Description</strong>: " + book.description;
+        
+        if(book.description.value){
+            description.innerHTML = "<strong>Description</strong>: " + book.description.value;
+        }
+
+        
         bookContainer.appendChild(description);
     }
     const authorContainer = document.createElement('div'); 
@@ -202,10 +212,26 @@ function displayBookInfo(book)
     const pubContainer = document.createElement('div'); // Published container
     
     
-    pubContainer.innerHTML = "<strong>Published:</strong> " + book.created.value;
+    pubContainer.innerHTML = "<strong>Published:</strong> " + new Date(book.created.value).toDateString();
 
     
-    // bookContainer.appendChild(authorContainer)
+    if(book.subjects){
+        
+        const subjectCotainer = document.createElement('div');
+        subjectCotainer.innerHTML = "<strong> Subject: </strong>";
+        
+        for (let i = 0; i < book.subjects.length; i++) {
+            subjectCotainer.innerHTML += book.subjects[i] + ", ";
+        }
+        
+        bookContainer.appendChild(subjectCotainer);
+    }
+    
+    
+    
+    
     bookContainer.appendChild(pubContainer)
+    
+    // bookContainer.appendChild(authorContainer)
     bookInfoContainer.appendChild(bookContainer);
 }
