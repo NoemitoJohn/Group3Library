@@ -2,8 +2,60 @@ const API = 'https://openlibrary.org';
 
 let books = null;
 
-const trendingContainer = document.querySelector(".trending")
-const bookViewContainer = document.querySelector(".book")
+const booksContainer = document.querySelector(".trending")
+const bookInfoContainer = document.querySelector(".book")
+
+const searchInput = document.querySelector("#searchInput")
+const searchBtn = document.querySelector("#searchBtn")
+
+
+searchBtn.addEventListener('click', search)
+
+function search(){
+    
+    const req = new XMLHttpRequest();
+
+    const inputValue = searchInput.value.toLowerCase();
+    const keywords = inputValue.split(" ");
+
+    const SEARCH_API = 'https://openlibrary.org/search.json?title='
+    
+    let query = "";
+    
+    for (const keyword in keywords) {
+        
+        query += keywords[keyword] + "+";
+    
+    }
+    
+    query = query.slice(0, query.length - 1)
+    
+    const searchValue = SEARCH_API + query;
+    
+    req.onreadystatechange = function() {
+        
+        if (this.readyState == 4 && this.status == 200) {
+            
+            bookInfoContainer.innerHTML = "";
+            booksContainer.innerHTML = "";
+            
+            const reqJSON = JSON.parse(req.responseText)
+            console.log(reqJSON)
+
+            const numResult = reqJSON.numFound;
+            
+            for (let i = 0; i < numResult; i++) {
+                displayBook(reqJSON.docs[i])
+                
+            }
+
+        }
+    };
+
+    req.open('GET', searchValue);
+    req.send();
+
+}
 
 function trendingBooks(){
 
@@ -15,7 +67,7 @@ function trendingBooks(){
        
 
         if(this.status == 0){
-           trendingContainer.innerHTML = "Please Wait" // loading
+           booksContainer.innerHTML = "Please Wait" // loading
         }
         
         if (books != null) {
@@ -25,14 +77,14 @@ function trendingBooks(){
 
         if (this.readyState == 4 && this.status == 200) {
             
-            trendingContainer.innerHTML = "" // reset body html
+            booksContainer.innerHTML = "" // reset body html
 
             const reqJSON = JSON.parse(req.responseText)
             books = reqJSON.works;
             
             for (let i = 0; i < MAX_BOOKS_DISPLAY; i++) {
                 console.log(books[i])
-                displayTrendingBooks(books[i])
+                displayBook(books[i])
             }        
        }
     };
@@ -43,7 +95,7 @@ function trendingBooks(){
 
 trendingBooks() // HOME PAGE
                 
-function displayTrendingBooks(books){
+function displayBook(books){
     
     
     const bookContainer = document.createElement('div')
@@ -91,7 +143,7 @@ function displayTrendingBooks(books){
     bookContainer.appendChild(authorContainer)
     bookContainer.appendChild(pubContainer)
     bookContainer.appendChild(langContainer)
-    trendingContainer.appendChild(bookContainer);
+    booksContainer.appendChild(bookContainer);
 
 }
 
@@ -105,9 +157,9 @@ function titleClicked(event){
     req.onreadystatechange = function() {
         
         if (this.readyState == 4 && this.status == 200) {
-            bookViewContainer.innerHTML = "";
+            bookInfoContainer.innerHTML = "";
             const reqJSON = JSON.parse(req.responseText)
-            displayBook(reqJSON);
+            displayBookInfo(reqJSON);
         }
     };
 
@@ -116,14 +168,14 @@ function titleClicked(event){
 }
 
 
-function displayBook(book)
+function displayBookInfo(book)
 {
     console.log(book)
     const bookContainer = document.createElement('div') // container 
     
     if (book.covers){
         const coverImg = document.createElement('img');
-        coverImg.setAttribute('src', `https://covers.openlibrary.org/b/id/${book.covers[0]}-M.jpg`);
+        coverImg.setAttribute('src', `https://covers.openlibrary.org/b/id/${book.covers[0]}-L.jpg`);
         bookContainer.appendChild(coverImg)    
     }
     const title = document.createElement('h3')
@@ -155,5 +207,5 @@ function displayBook(book)
     
     // bookContainer.appendChild(authorContainer)
     bookContainer.appendChild(pubContainer)
-    bookViewContainer.appendChild(bookContainer);
+    bookInfoContainer.appendChild(bookContainer);
 }

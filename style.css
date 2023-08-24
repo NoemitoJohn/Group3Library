@@ -1,6 +1,11 @@
 .content{
     display: flex;
+    gap: 10px;
+    margin: 5px;
     
+}
+.header{
+    margin: 0px;
 }
 .trending{
     flex: 1;
@@ -8,7 +13,10 @@
 .book{
     flex: 1;
 }
-
+nav {
+    display: flex;
+    justify-content: space-between;
+}
 
 .title{
     border: none;
@@ -36,5 +44,6 @@
 
 .bookContainer{
     border: 1px solid black;
-    margin: 10px;
+    margin-bottom: 5px;
+    padding: 7px;
 }
